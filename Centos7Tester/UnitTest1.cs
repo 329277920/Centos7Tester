@@ -8,6 +8,6 @@ namespace Centos7Tester
         [TestMethod]
         public void TestMethod1()
         {
-        }
+        }  
     }
 }
