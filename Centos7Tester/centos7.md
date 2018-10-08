@@ -10,8 +10,10 @@
 > &nbsp;&nbsp;[1.5、删除文件](#1.5)<br>
 > &nbsp;&nbsp;[1.6、修改权限](#1.6)<br>
 > [二、安装软件](#2)<br>
-> &nbsp;&nbsp;[1.1、RPM工具](#1.2)<br>
-> &nbsp;&nbsp;[1.2、yum](#1.2)
+> &nbsp;&nbsp;[2.1、RPM工具](#2.2)<br>
+> &nbsp;&nbsp;[2.2、yum](#2.2)<br>
+> [三、系统管理](#3)<br>
+> &nbsp;&nbsp;[3.1、systemctl](#3.1)<br>
 
 <h2 id="1">一、文件管理</h2>
 <h3 id="1.1">1.1 tar命令</h3>
@@ -90,9 +92,39 @@ r:数字4,读取权限<br>
 <pre><code># chmod 444 test</code></pre>
 
 
-
-
-
 <h2 id="2">二、安装软件</h2>
 <h3 id="2.1">2.1 RPM工具</h3>
 RPM全称"Redhat Package Manager"，它在本地系统中，以数据库的形式记录了本机的RPM包，以及包之间的依赖关系。RPM包是预先在linux机器上编译并打包的文件，安装快捷。但它**不处理包之间的依赖关系**，以及安装环境必须与编译环境一致。
+
+<h2 id="3">三、系统管理</h2>
+<h3 id="3.1">3.1 systemctl</h3>
+**systemctl**对系统服务的启动、停止等管理。<br>
+下列命令查看系统所有服务
+
+	systemctl -al
+
+下列命令查看某个系统服务
+
+	systemctl status firewalld
+
+下列命令启动某个服务
+
+	systemctl start firewalld
+
+下列命令停止某个服务
+
+	systemctl stop firewalld
+
+下列命令设置某个服务开机启动
+
+	systemctl enable firewalld
+
+下列命令禁用某个服务的开机启动
+
+	systemctl disable firewalld 
+
+注册服务<br>
+参考: [http://www.jinbuguo.com/systemd/systemd.service.html](http://www.jinbuguo.com/systemd/systemd.service.html)<br>
+
+
+
