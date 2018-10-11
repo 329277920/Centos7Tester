@@ -1,6 +1,7 @@
 # Centos7使用记录 #
 [https://www.centoschina.cn](https://www.centoschina.cn)<br>
-[http://man.linuxde.net/](http://man.linuxde.net/)
+[http://man.linuxde.net/](http://man.linuxde.net/)<br>
+[https://www.linuxprobe.com/chapter-06.html](https://www.linuxprobe.com/chapter-06.html)
 > 目录<br>
 > [一、文件管理](#1)<br>
 > &nbsp;&nbsp;[1.1、tar打包](#1.1)<br>
@@ -16,6 +17,12 @@
 > &nbsp;&nbsp;[3.1、systemctl](#3.1)<br>
 > &nbsp;&nbsp;[3.2、ps](#3.2)<br>
 > &nbsp;&nbsp;[3.3、top](#3.3)<br>
+> [四、文件系统](#4)<br>
+> &nbsp;&nbsp;[4.1、基础概念](#4.1)<br>
+> &nbsp;&nbsp;[4.2、目录结构](#4.2)<br>
+> &nbsp;&nbsp;[4.3、常见命令](#4.3)<br>
+> [五、硬盘管理](#5)<br>
+> &nbsp;&nbsp;[5.1、基础概念](#5.1)
 
 <h2 id="1">一、文件管理</h2>
 <h3 id="1.1">1.1 tar命令</h3>
@@ -199,3 +206,155 @@ COMMAND 进程名称（命令名/命令行）<br>
 
 **多U多核CPU监控**<br>
 在top基本视图中，按键盘数字1，可监控每个逻辑CPU的状况
+
+<h2 id="4">四、文件系统</h2>
+
+<h3 id="4.1">4.1、基础概念</h3>
+在Linux系统中，目录、设备、套接字、打印机等都被抽象成了文件。从“根（/）”目录开始（不同与windows的从盘符开始），采用树形结构来存放文件和目录。目录可以单独挂载到不同磁盘的不同分区。 
+
+![](https://i.imgur.com/uIkAal0.png)
+
+linux支持多种文件系统,常见的如:**ext4**，**xfs**。在磁盘分区后，需要在每个分区上建立文件系统，才能使用。可以理解这些文件系统提供了对磁盘的读取和写入。linux内核抽象出了**VFS**（Virtual File System，虚拟文件系统）接口，提供了统一的API，来操作不同的文件系统。
+![](https://i.imgur.com/HPS4fOQ.png)
+
+<h3 id="4.2">4.2、目录结构</h3>
+/bin 二进制可执行命令
+
+/dev 设备特殊文件
+
+/etc 系统管理和配置文件
+
+/etc/rc.d 启动的配置文件和脚本
+
+/home 用户主目录的基点，比如用户user的主目录就是/home/user，可以用~user表示
+
+/lib 标准程序设计库，又叫动态链接共享库，作用类似windows里的.dll文件
+
+/sbin 系统管理命令，这里存放的是系统管理员使用的管理程序
+
+/tmp 公用的临时文件存储点
+
+/root 系统管理员的主目录（呵呵，特权阶级）
+
+/mnt 系统提供这个目录是让用户临时挂载其他的文件系统。
+
+/lost+found 这个目录平时是空的，系统非正常关机而留下“无家可归”的文件（windows下叫什么.chk）就在这里
+
+/proc 虚拟的目录，是系统内存的映射。可直接访问这个目录来获取系统信息。
+
+/var 某些大文件的溢出区，比方说各种服务的日志文件
+
+/usr 最庞大的目录，要用到的应用程序和文件几乎都在这个目录。其中包含：
+
+/usr/X11R6 存放X window的目录
+
+/usr/bin 众多的应用程序
+
+/usr/sbin 超级用户的一些管理程序
+
+/usr/doc linux文档
+
+/usr/include linux下开发和编译应用程序所需要的头文件
+
+/usr/lib 常用的动态链接库和软件包的配置文件
+
+/usr/man 帮助文档
+
+/usr/src 源代码，linux内核的源代码就放在/usr/src/linux里
+
+/usr/local/bin 本地增加的命令
+
+/usr/local/lib 本地增加的库
+
+<h3 id="4.3">4.3、常用命令</h3>
+
+*du* : 查看文件和目录大小
+
+	du -sh / #显示指定文件或目录的大小
+    du -sh /* #显示指定文件夹下所有子目录的大小
+
+<h1 id="5">五、硬盘管理</h1>
+<h3 id="5.1">5.1、基础概念</h3>
+linux在"/dev/"目录下保存所有的磁盘设备文件，常见的有"hd":ide硬盘,"sd":sata硬盘,'vd':虚拟硬盘。
+
+*硬盘*
+
+	fdisk -l #查看硬盘信息
+
+![](https://i.imgur.com/ZriFJ2Q.png)
+
+在上图中，可以看到磁盘名称为"/dev/sda"，分区名称为:"/dev/sda1-3"各部分名称解释如下：
+
+![](https://i.imgur.com/AnXNckf.png)
+
+*分区*
+
+硬盘设备是由大量的扇区组成的，每个扇区的容量为512字节。其中第一个扇区最重要，它里面保存着主引导记录与分区表信息。就第一个扇区来讲，主引导记录需要占用446字节，分区表为64字节，结束符占用2字节；其中分区表中每记录一个分区信息就需要16字节，这样一来最多只有4个分区信息可以写到第一个扇区中，这4个分区就是4个**主分区**。
+
+![](https://i.imgur.com/6XAcj6f.png)
+
+从上图可以看出，在分区表中最多只能有4个分区，如果需要更多的分区，可以将其中一个分区做为**扩展分区**，它存储指向下一个扇区（扩展分区表，这里只是个人的理解）的指针，新扇区存储的分区信息称为**逻辑分区**。分区建立后，需要格式化（建立文件系统ext4,xfs..）。
+
+![](https://i.imgur.com/p0tiDYq.png)
+
+*挂载*
+
+将一个磁盘分区关联到一个已经存在的目录。在centos中，使用**mount**命令挂载文件系统(临时),在"/etc/fstab"中存储已经挂载目录信息（永久）。
+
+
+*实例*
+
+在虚拟机中(WMware)添加硬盘，并完成挂载。<br>
+1、添加硬盘，添加步骤略（需关闭虚拟机）。
+
+![](https://i.imgur.com/yl1yIGw.png)
+
+2、开机，并查看硬盘信息
+
+![](https://i.imgur.com/2BN9p4a.png)
+
+
+3、分区
+
+使用**fdisk**对磁盘分区，参数说明:
+
+>m:查看全部可用的参数<br>
+>n:添加新的分区<br>
+>d:删除某个分区信息<br>
+>l:列出所有可用的分区类型<br>
+>t:改变某个分区的类型<br>
+>p:查看分区表信息<br>
+>w:保存并退出<br>
+>q:不保存直接退出<br>
+
+
+![](https://i.imgur.com/i4fkGFA.png)
+
+4、格式化
+
+**mkfs**对分区格式化（建立文件系统），在命令中输入"mkfs"，按两次"tab"键，会列出所有支持的文件系统。
+
+![](https://i.imgur.com/0M094d1.png)
+
+这里选择ext4，对分区格式化。
+
+![](https://i.imgur.com/NesfxiF.png)	
+
+5、挂载
+
+**mount**对格式化的磁盘挂载到一个已存在的目录，格式"mount [分区] [目录]"，例如:
+
+	mount /dev/sdb1 /fs/sdb1/ #将分区/dev/sdb1挂载到目录/fs/sdb1/
+
+6、开机自动挂载
+
+在/etc/fstab中写入需要挂载的分区。格式："设备文件 挂载目录 格式类型 权限选项 是否备份(0|1) 是否自检(0|1)"。
+
+	
+7、查看分区挂载和使用率
+
+	df -h
+
+![](https://i.imgur.com/WUElUxH.png)
+
+
