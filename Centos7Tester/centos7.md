@@ -22,7 +22,11 @@
 > &nbsp;&nbsp;[4.2、目录结构](#4.2)<br>
 > &nbsp;&nbsp;[4.3、常见命令](#4.3)<br>
 > [五、硬盘管理](#5)<br>
-> &nbsp;&nbsp;[5.1、基础概念](#5.1)
+> &nbsp;&nbsp;[5.1、基础概念](#5.1)<br>
+> &nbsp;&nbsp;[5.2、分区实例](#5.2)<br>
+> [六、网络](#6)<br>
+> &nbsp;&nbsp;[6.1、防火墙](#6.1)<br>
+> &nbsp;&nbsp;&nbsp;&nbsp;[6.1.1、firewalld](#6.1.1)
 
 <h2 id="1">一、文件管理</h2>
 <h3 id="1.1">1.1 tar命令</h3>
@@ -301,8 +305,8 @@ linux在"/dev/"目录下保存所有的磁盘设备文件，常见的有"hd":ide
 
 将一个磁盘分区关联到一个已经存在的目录。在centos中，使用**mount**命令挂载文件系统(临时),在"/etc/fstab"中存储已经挂载目录信息（永久）。
 
+<h3 id="5.2">5.2、分区实例</h3>
 
-*实例*
 
 在虚拟机中(WMware)添加硬盘，并完成挂载。<br>
 1、添加硬盘，添加步骤略（需关闭虚拟机）。
@@ -357,4 +361,35 @@ linux在"/dev/"目录下保存所有的磁盘设备文件，常见的有"hd":ide
 
 ![](https://i.imgur.com/WUElUxH.png)
 
+<h2 id="6">六、网络</h2>
 
+<h3 id="6.1">6.1、防火墙</h3>
+
+<h3 id="6.1.1">6.1.1、firewalld</h3>
+
+*定义*
+
+firewalld是一个防火墙配置工具，方便用户定义防火墙规则，底层依赖netfilter来实现规则。 
+
+*zone*
+
+使用zone(区域)来定义一组规则，并可以将它绑定到一个网卡上，方便快速切换不同的策略。
+
+*实例*
+
+	firewall-cmd --get-default-zone #查看默认区域
+	
+	firewall-cmd --get-zone-of-interface=ens33 #查看网卡"ens33"的区域
+
+    firewall-cmd --permanent --set-default-zone=public #设置默认区域为public,--permanent:为永久有效
+    firewall-cmd --reload #立即生效 
+
+	firewall-cmd --permanent --zone=public --add-port=27017/tcp #为public区域增加开放端口
+    firewall-cmd --reload #立即生效 
+
+    firewall-cmd --permanent --zone=public --remove-port=27017/tcp #移除端口
+    firewall-cmd --reload #立即生效
+
+	firewall-cmd --permanent --zone=public --add-forward-port=port=888:proto=tcp:toport=22:toaddr=192.168.10.10 #端口转发    
+
+备注:使用firewalld配置的防火墙策略默认为运行时（Runtime）模式，又称为当前生效模式，而且随着系统的重启会失效。如果想让配置策略一直存在，就需要使用永久（Permanent）模式。
