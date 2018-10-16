@@ -27,6 +27,7 @@
 > [六、网络](#6)<br>
 > &nbsp;&nbsp;[6.1、防火墙](#6.1)<br>
 > &nbsp;&nbsp;&nbsp;&nbsp;[6.1.1、firewalld](#6.1.1)
+> &nbsp;&nbsp;&nbsp;&nbsp;[6.1.2、ip](#6.1.2)
 
 <h2 id="1">一、文件管理</h2>
 <h3 id="1.1">1.1 tar命令</h3>
@@ -45,7 +46,7 @@ tar: 将一组文件打包成一个.tar文件。<br>
 2
 </code></pre>
 
-下列命令解压出某个包的所有文件-x:解压，-f:文件名。<br>
+下列命令解压出某个包的所有文件-x:解包，-f:文件名。<br>
 <pre><code># tar -xf demo.tar
 </code></pre>
 
@@ -373,7 +374,7 @@ firewalld是一个防火墙配置工具，方便用户定义防火墙规则，�
 
 *zone*
 
-使用zone(区域)来定义一组规则，并可以将它绑定到一个网卡上，方便快速切换不同的策略。
+使用zone(区域)来定义一组规则，并可以将它绑定到一个网卡上，方便快速切换不同的策略。可以在"/etc/firewalld/zones/"目录中，查看所有区域的定义，以及各个区域的规则。
 
 *实例*
 
@@ -390,6 +391,14 @@ firewalld是一个防火墙配置工具，方便用户定义防火墙规则，�
     firewall-cmd --permanent --zone=public --remove-port=27017/tcp #移除端口
     firewall-cmd --reload #立即生效
 
+    firewall-cmd --info-zone=public #查看public区域基础信息
+
 	firewall-cmd --permanent --zone=public --add-forward-port=port=888:proto=tcp:toport=22:toaddr=192.168.10.10 #端口转发    
 
 备注:使用firewalld配置的防火墙策略默认为运行时（Runtime）模式，又称为当前生效模式，而且随着系统的重启会失效。如果想让配置策略一直存在，就需要使用永久（Permanent）模式。
+
+<h3 id="6.1.2">6.1.2、ip</h3>
+
+	ip addr add [ip] dev [网卡] #给一个网络接口添加IP地址
+	ip addr del [ip] dev [网卡] #给一个网络接口删除IP地址
+    ip addr #显示所有网卡信息
